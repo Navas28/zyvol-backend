@@ -1,23 +1,30 @@
-import  express  from "express";
+import express from "express";
 import mongoose from "mongoose";
-import cors from "cors"
-import dotenv from "dotenv"
+import cors from "cors";
+import dotenv from "dotenv";
 import productRoutes from "./routes/productRoutes";
+import stripeRoutes from "./routes/stripeRoutes";
+import contactsRoutes from "./routes/contactsRoutes";
 
+dotenv.config();
 
-dotenv.config()
-const app = express()
-const PORT = process.env.PORT || 6000;
-const MONGO_URI = process.env.MONGO_URI || "";
+const app = express();
 
-app.use(cors())
-app.use(express.json())
+app.use(cors());
+app.use(express.json());
 
 app.use("/api/products", productRoutes);
+app.use("/api/checkout", stripeRoutes);
+app.use("/api/contact", contactsRoutes);
 
 mongoose
-  .connect(MONGO_URI)
-  .then(() => {
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}  & mongoose connected`));
-  })
-  .catch((err) => console.error("MongoDB connection failed:", err));
+    .connect(process.env.MONGO_URI!)
+    .then(() => {
+        console.log("MongoDB connected successfully");
+        const port = process.env.PORT || 4000;
+        app.listen(port, () => console.log(`Server running on port ${port}`));
+    })
+    .catch((err) => {
+        console.error("DB connection error:", err);
+        process.exit(1);
+    });

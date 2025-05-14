@@ -3,20 +3,24 @@ import Product from "../models/Product";
 
 const router = express.Router();
 
-router.get("/", async (req: Request, res: Response) => {
+router.get("/", async (req, res) => {
+    const { category, brand } = req.query;
+
+    const filter: any = {};
+    if (category && typeof category === "string") filter.category = category;
+    if (brand && typeof brand === "string") filter.brand = brand;
+
     try {
-        const products = await Product.find();
+        const products = await Product.find(filter);
         res.json(products);
     } catch (err) {
-        res.status(500).json({ error: "Failed to fetch products" });
+        res.status(500).json({ error: "Server error" });
     }
 });
 
-// Get single product by ID
 router.get("/:id", (req: Request, res: Response) => {
     const { id } = req.params;
 
-    // Wrapping async code in try-catch
     (async () => {
         try {
             const product = await Product.findById(id);
@@ -31,7 +35,6 @@ router.get("/:id", (req: Request, res: Response) => {
     })();
 });
 
-// Get products by category
 router.get("/category/:category", (req: Request, res: Response) => {
     const { category } = req.params;
 
@@ -50,5 +53,40 @@ router.get("/category/:category", (req: Request, res: Response) => {
 
     fetchProductsByCategory();
 });
+
+router.put("/:productId", async (req: Request, res: Response) => {
+    (async () => {
+        const { productId } = req.params;
+        const updateProductData = req.body;
+
+        try {
+            const updateProduct = await Product.findByIdAndUpdate(productId, updateProductData, {
+                new: true,
+            });
+            if (!updateProduct) {
+                return res.status(404).json({ message: "Product not found" });
+            }
+            res.json(updateProduct);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: "Error updating product" });
+        }
+    })();
+});
+
+router.delete("/:productId", (req: Request,res: Response) => {
+    (async () => {
+        try {
+        const deletedProduct = await Product.findByIdAndDelete(req.params.productId)
+        if(!deletedProduct){
+            return res.status(404).json({message: "Product not found"})
+        }
+        res.status(200).json({message: "Product deleted successfully"})
+    } catch (error) {
+        console.error("Error deleting product", error);
+        res.status(500).json({message: "Server error deleting product"})
+    }
+    })()
+})
 
 export default router;

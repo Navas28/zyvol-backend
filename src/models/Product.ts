@@ -15,7 +15,10 @@ const productSchema = new mongoose.Schema(
             importedBy: { type: String },
             weight: { type: String },
         },
-        size: [{ type: Number, required: true }],
+        sizes: {
+            type: [Number],
+            required: true,
+        },
         additionalImages: [{ type: String }],
     },
     { timestamps: true }
