@@ -54,6 +54,8 @@ router.get("/category/:category", (req: Request, res: Response) => {
     fetchProductsByCategory();
 });
 
+//   Admin panel
+
 router.put("/:productId", async (req: Request, res: Response) => {
     (async () => {
         const { productId } = req.params;
@@ -74,19 +76,30 @@ router.put("/:productId", async (req: Request, res: Response) => {
     })();
 });
 
-router.delete("/:productId", (req: Request,res: Response) => {
+router.delete("/:productId", (req: Request, res: Response) => {
     (async () => {
         try {
-        const deletedProduct = await Product.findByIdAndDelete(req.params.productId)
-        if(!deletedProduct){
-            return res.status(404).json({message: "Product not found"})
+            const deletedProduct = await Product.findByIdAndDelete(req.params.productId);
+            if (!deletedProduct) {
+                return res.status(404).json({ message: "Product not found" });
+            }
+            res.status(200).json({ message: "Product deleted successfully" });
+        } catch (error) {
+            console.error("Error deleting product", error);
+            res.status(500).json({ message: "Server error deleting product" });
         }
-        res.status(200).json({message: "Product deleted successfully"})
+    })();
+});
+
+router.post("/", async (req, res) => {
+    try {
+        const newProduct = new Product(req.body);
+        const saveProduct = await newProduct.save();
+        res.status(201).json(saveProduct);
     } catch (error) {
-        console.error("Error deleting product", error);
-        res.status(500).json({message: "Server error deleting product"})
+        console.error("Error creating product", error);
+        res.status(500).json({ error: "Failed to create product" });
     }
-    })()
-})
+});
 
 export default router;
