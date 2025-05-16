@@ -5,17 +5,22 @@ import dotenv from "dotenv";
 import productRoutes from "./routes/productRoutes";
 import stripeRoutes from "./routes/stripeRoutes";
 import contactsRoutes from "./routes/contactsRoutes";
+import webhookRoutes from "./routes/webhookRoutes"
+import orderRoutes from "./routes/orderRoutes"
 
 dotenv.config();
 
 const app = express();
 
+app.use("/api/webhook", webhookRoutes)
+
 app.use(cors());
-app.use(express.json());
+app.use(express.json())
 
 app.use("/api/products", productRoutes);
 app.use("/api/checkout", stripeRoutes);
 app.use("/api/contact", contactsRoutes);
+app.use("/api/orders", orderRoutes);
 
 mongoose
     .connect(process.env.MONGO_URI!)
