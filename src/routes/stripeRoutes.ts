@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { stripe } from "../../config/stripe";
+import { stripe } from "../config/stripe";
 import Order from "../models/order";
 
 const router = express.Router();
