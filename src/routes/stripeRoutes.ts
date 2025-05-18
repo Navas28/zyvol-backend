@@ -5,7 +5,7 @@ import Order from "../models/order";
 const router = express.Router();
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
-router.post("/create-checkout-session", async (req, res) => {
+router.post("/create-checkout-session", async (req: Request, res: Response) => {
     const { amount } = req.body;
 
     try {

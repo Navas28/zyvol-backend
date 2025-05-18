@@ -3,7 +3,7 @@ import Product from "../models/Product";
 
 const router = express.Router();
 
-router.get("/", async (req, res) => {
+router.get("/", async (req: Request, res: Response) => {
     const { category, brand } = req.query;
 
     const filter: any = {};
@@ -91,7 +91,7 @@ router.delete("/:productId", (req: Request, res: Response) => {
     })();
 });
 
-router.post("/", async (req, res) => {
+router.post("/", async (req: Request, res: Response) => {
     try {
         const newProduct = new Product(req.body);
         const saveProduct = await newProduct.save();

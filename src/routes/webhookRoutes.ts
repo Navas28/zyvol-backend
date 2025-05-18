@@ -1,11 +1,11 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import Stripe from "stripe";
 import Order from "../models/order";
 import stripe from "stripe";
 
 const router = express.Router();
 
-router.post("/", express.raw({ type: "application/json" }), (req, res) => {
+router.post("/", express.raw({ type: "application/json" }), (req: Request, res: Response) => {
   (async () => {
     const sig = req.headers["stripe-signature"] as string;
     const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
